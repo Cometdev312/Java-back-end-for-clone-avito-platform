@@ -3,7 +3,7 @@ package sky.diplom.diplom.dto;
 import lombok.Data;
 
 @Data
-public class RegisterReq {
+public class RegisterReqDto {
     private String username;
     private String password;
     private String firstName;
