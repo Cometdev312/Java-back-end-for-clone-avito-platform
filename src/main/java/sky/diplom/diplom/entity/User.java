@@ -1,6 +1,7 @@
 package sky.diplom.diplom.entity;
 
 import lombok.*;
+import sky.diplom.diplom.dto.Role;
 
 import javax.persistence.*;
 
@@ -30,5 +31,7 @@ public class User {
     private String password;
     @OneToOne
     private UserImage userImage;
+    @Column(name = "role")
+    private Role role;
 
 }
