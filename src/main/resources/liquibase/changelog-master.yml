@@ -1,4 +1,3 @@
-databaseChangelog:
+databaseChangeLog:
   - include:
       file: liquibase/scripts/diplom.sql
-
