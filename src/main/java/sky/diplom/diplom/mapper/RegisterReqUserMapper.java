@@ -14,8 +14,8 @@ public interface RegisterReqUserMapper {
     @Mapping(target = "password", source = "password")
     @Mapping(target = "firstName", source = "firstName")
     @Mapping(target = "lastName", source = "lastName")
-    @Mapping(target = "role", source = "role")
     @Mapping(target = "phone", source = "phone")
+    @Mapping(target = "role", source = "role")
     RegisterReqDto toEntity(User user);
 
 }

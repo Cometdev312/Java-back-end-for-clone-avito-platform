@@ -1,6 +1,5 @@
 package sky.diplom.diplom.dto;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +8,6 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 public class NewPasswordDto {
-    private String oldPassword;
+    private String currentPassword;
     private String newPassword;
 }
