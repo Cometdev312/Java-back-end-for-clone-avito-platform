@@ -8,6 +8,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @AllArgsConstructor
+@Table(name = "ads")
 @Getter
 @Setter
 public class Ads {
@@ -15,8 +16,11 @@ public class Ads {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "title")
     private String title;
+    @Column(name = "description")
     private String description;
+    @Column(name = "price")
     private int price;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,3 +31,6 @@ public class Ads {
     @JoinColumn()
     private UserImage userImage;
 }
+
+
+
