@@ -43,5 +43,6 @@ create table users
     password   varchar(255),
     phone      varchar(255),
     role       integer,
+    username   varchar(255),
     image_id   bigint
 );
