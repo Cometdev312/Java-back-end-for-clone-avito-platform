@@ -3,6 +3,7 @@ package sky.diplom.diplom.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
@@ -19,7 +20,7 @@ public class Comment {
     private int author;
     private String authorImage;
     private String authorFirstName;
-    private int createdAt;
+    private LocalDateTime createdAt;
     private String text;
 
 }
