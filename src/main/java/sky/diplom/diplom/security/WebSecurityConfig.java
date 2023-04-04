@@ -1,4 +1,4 @@
-package sky.diplom.diplom;
+package sky.diplom.diplom.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

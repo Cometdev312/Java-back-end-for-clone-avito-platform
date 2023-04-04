@@ -6,6 +6,7 @@ import sky.diplom.diplom.dto.NewPasswordDto;
 import sky.diplom.diplom.dto.RegisterReqDto;
 import sky.diplom.diplom.dto.UpdateUserDto;
 import sky.diplom.diplom.entity.User;
+import sky.diplom.diplom.entity.UserImage;
 
 import java.awt.*;
 
@@ -18,5 +19,7 @@ public interface UserService {
 
     User createUser(RegisterReqDto registerReqDto);
 
-    Image updateUserImage(Image image);
+    Image updateUserImage(UserImage image);
+
+    User getUserById(Long id);
 }
