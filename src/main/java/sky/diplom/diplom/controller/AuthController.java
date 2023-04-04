@@ -1,6 +1,7 @@
 package sky.diplom.diplom.controller;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
+    @Tag(name = "Авторизация")
     public ResponseEntity<?> login(@RequestBody LoginReqDto req) {
         if (authService.login(req.getUsername(), req.getPassword())) {
             return ResponseEntity.ok().build();
@@ -34,6 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Tag(name = "Регистрация")
     public ResponseEntity<?> register(@RequestBody RegisterReqDto req) {
         Role role = req.getRole() == null ? USER : req.getRole();
         if (authService.register(req, role)) {

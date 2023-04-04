@@ -43,15 +43,15 @@ public class WebSecurityConfig {
                                 .mvcMatchers("/ads/**", "/users/**").authenticated()
 
                 )
-                .cors().disable()
+                .cors().and()
                 .httpBasic(withDefaults());
         return http.build();
     }
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-            return new BCryptPasswordEncoder();
-        }
+//        @Bean
+//        public PasswordEncoder passwordEncoder() {
+//            return new BCryptPasswordEncoder();
+//        }
 
 
 
