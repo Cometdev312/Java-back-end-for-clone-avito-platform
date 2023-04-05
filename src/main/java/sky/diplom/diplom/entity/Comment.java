@@ -17,10 +17,17 @@ public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int pk;
-    private int author;
-    private String authorImage;
-    private String authorFirstName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id")
+    private User author;
+    @OneToOne
+    private UserImage authorImage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "first_name")
+    private User authorFirstName;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+    @Column(name = "text")
     private String text;
 
 }
