@@ -21,7 +21,7 @@ public class Comment {
     @JoinColumn(name = "id")
     private User author;
     @OneToOne
-    private UserImage authorImage;
+    private Image authorImage;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "first_name")
     private User authorFirstName;

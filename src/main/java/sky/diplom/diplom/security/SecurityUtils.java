@@ -1,15 +1,16 @@
 package sky.diplom.diplom.security;
 
-import lombok.NoArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import sky.diplom.diplom.dto.Role;
 import sky.diplom.diplom.entity.Ads;
 import sky.diplom.diplom.entity.Comment;
 
-import java.nio.file.AccessDeniedException;
-
-@NoArgsConstructor
 public class SecurityUtils {
+
+    private SecurityUtils() {
+    }
+
     public static MyUserDetails getUserDetailsFromContext() {
         return (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
@@ -18,19 +19,19 @@ public class SecurityUtils {
         return getUserDetailsFromContext().getId();
     }
 
-    public static void checkPermissionToAds(Ads ads) throws AccessDeniedException {
+    public static void checkPermissionToAds(Ads ads) {
         MyUserDetails userDetails = getUserDetailsFromContext();
+
         if (!userDetails.getAuthorities().contains(Role.ADMIN) && userDetails.getId() != ads.getAuthor().getId()) {
-            throw new AccessDeniedException("Чтобы изменить или удалить " +
-                    "объявление необходимо иметь роль Admin, " +
-                    "или являться автором этого объявления");
+            throw new AccessDeniedException("Чтобы изменить/удалить объявление, нужно иметь роль ADMIN или быть владельцем этого объявления");
         }
     }
 
-    public static void checkPermissionToComments(Comment comment) {
+    public static void checkPermissionToAdsComment(Comment adsComment) {
         MyUserDetails userDetails = getUserDetailsFromContext();
-        if (!userDetails.getAuthorities().contains(Role.ADMIN) && userDetails.getId() != comment.getPk()) {
 
+        if (!userDetails.getAuthorities().contains(Role.ADMIN) && userDetails.getId() != adsComment.getAuthor().getId()) {
+            throw new AccessDeniedException("Чтобы изменить/удалить комментарий, нужно иметь роль ADMIN или быть владельцем этого комментария");
         }
     }
 }

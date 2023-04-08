@@ -29,7 +29,7 @@ public class Ads {
 
     @OneToOne()
     @JoinColumn()
-    private UserImage userImage;
+    private Image userImage;
 }
 
 

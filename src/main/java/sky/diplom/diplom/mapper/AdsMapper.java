@@ -7,7 +7,7 @@ import sky.diplom.diplom.dto.AdsDto;
 import sky.diplom.diplom.dto.CreateAdsDto;
 import sky.diplom.diplom.dto.FullAdsDto;
 import sky.diplom.diplom.entity.Ads;
-import sky.diplom.diplom.entity.UserImage;
+import sky.diplom.diplom.entity.Image;
 
 @Mapper(componentModel = "spring")
 public interface AdsMapper extends WebMapper<AdsDto, Ads> {
@@ -44,7 +44,7 @@ public interface AdsMapper extends WebMapper<AdsDto, Ads> {
 
     // Этот метод преобразует Image в строку
     @Named("imageMapping")
-    default String imageMapping(UserImage userImage) {
+    default String imageMapping(Image userImage) {
         if (userImage == null) {
             return null;
         }

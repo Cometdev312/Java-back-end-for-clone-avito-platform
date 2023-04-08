@@ -1,0 +1,93 @@
+
+###
+GET http://localhost:8080/get
+Content-Type: application/json
+Authorization: Basic user password
+
+###
+GET http://localhost:8080/ads/asddsfsdf/comment
+Content-Type: application/json
+Authorization: Basic user password
+
+###
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "password",
+  "firstName":  " asdad",
+  "lastName": " asdad",
+  "phone":  " asdad"
+}
+
+###
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "username": "user12",
+  "password": "password1"
+}
+
+###
+GET http://localhost:8080/ads/me
+Content-Type: application/json
+Authorization: Basic user password
+
+###
+GET http://localhost:8080/users/me
+Content-Type: application/json
+Authorization: Basic user@gmail.com password
+
+###
+PATCH http://localhost:8080/users/me
+Content-Type: application/json
+Authorization: Basic user password
+
+{
+  "phone": "33333",
+  "lastName": "Ivanov",
+  "firstName": "Ivan",
+  "email": "user",
+  "id": 1
+}
+
+###
+GET http://localhost:8080/users/1
+Content-Type: application/json
+Authorization: Basic user password
+
+###
+GET http://localhost:8080/ads
+Content-Type: application/json
+Authorization: Basic user password
+
+
+###
+POST http://localhost:8080/users/set_password
+Content-Type: application/json
+Authorization: Basic user password
+
+{
+  "newPassword": "password",
+  "currentPassword": "password1"
+}
+
+###
+POST http://localhost:8080/ads
+Content-Type: application/json
+Authorization: Basic user password
+
+{
+  "image": "123",
+  "price": 123,
+  "description": "123",
+  "pk": 1233,
+  "title": "123"
+}
+
+###
+GET http://localhost:8080/ads
+Content-Type: application/json
+Authorization: Basic user password
