@@ -1,6 +1,7 @@
 package sky.diplom.diplom.service;
 
 import lombok.SneakyThrows;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
 import sky.diplom.diplom.dto.Role;
 import sky.diplom.diplom.dto.UserDto;
@@ -9,21 +10,13 @@ import sky.diplom.diplom.entity.User;
 public interface UserService {
 
     /**
-     * Create User
-     *
-     * @param user User object
-     * @return User Created User
-     */
-    User createUser(User user);
-
-    /**
      * Get all users from repository
      * and return them all
      *
      * @return Collection<User>
      */
 
-    User getUser();
+    User getUser(Authentication authentication);
 
     /**
      * Get user by ID
@@ -38,7 +31,7 @@ public interface UserService {
      * @param userDto User object with new data
      * @return User
      */
-    User updateUser(UserDto userDto);
+    User updateUser(UserDto userDto, Authentication authentication);
 
     /**
      * Changing the user's password
@@ -46,7 +39,7 @@ public interface UserService {
      * @param newPassword     New Password
      * @param currentPassword Current Password
      */
-    void newPassword(String newPassword, String currentPassword);
+    void updatePassword(String newPassword, String currentPassword, Authentication authentication);
 
     /**
      * Updates users image
@@ -54,7 +47,7 @@ public interface UserService {
      * @param image new image
      * @return images path
      */
-    String updateUserImage(MultipartFile image);
+    String updateUserImage(MultipartFile image, Authentication authentication);
 
     /**
      * Changing a user's role

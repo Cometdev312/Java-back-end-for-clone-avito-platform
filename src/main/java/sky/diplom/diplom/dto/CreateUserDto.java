@@ -8,10 +8,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import static sky.diplom.diplom.regulars.Regexp.EMAIL_REGEXP;
+import static sky.diplom.diplom.regulars.Regexp.PHONE_REGEXP;
+
 @Data
 public class CreateUserDto {
 
-    @Email
+    @Email(regexp = EMAIL_REGEXP)
     @Schema(example = "user@user.ru")
     private String email;
     @NotBlank
@@ -23,5 +26,6 @@ public class CreateUserDto {
     @NotBlank
     @Size(min = 8)
     private String password;
+    @Pattern(regexp = PHONE_REGEXP)
     private String phone;
 }

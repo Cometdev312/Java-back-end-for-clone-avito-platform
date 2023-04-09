@@ -7,4 +7,3 @@ import sky.diplom.diplom.entity.Image;
 @Repository
 public interface ImageRepository extends JpaRepository<Image, Long> {
 }
-

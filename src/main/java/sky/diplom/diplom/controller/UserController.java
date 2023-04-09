@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sky.diplom.diplom.dto.CreateUserDto;
@@ -33,34 +34,26 @@ public class UserController {
     private final UserMapper userMapper;
     private final ImageService imageService;
 
-    @Operation(summary = "addUser", description = "addUser")
-    @PostMapping
-    public ResponseEntity<CreateUserDto> addUser(@Valid @RequestBody CreateUserDto createUserDto) {
-        printLogInfo("addUser", "post", "/users");
-        User user = userService.createUser(userMapper.createUserDtoToEntity(createUserDto));
-        return ResponseEntity.ok(userMapper.toCreateUserDto(user));
-    }
-
     @Operation(summary = "updateUser", description = "updateUser")
     @PatchMapping("/me")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, Authentication authentication) {
         printLogInfo("updateUser", "patch", "/me");
-        return ResponseEntity.ok(userMapper.toDto(userService.updateUser(userDto)));
+        return ResponseEntity.ok(userMapper.toDto(userService.updateUser(userDto, authentication)));
     }
 
     @Operation(summary = "setPassword", description = "setPassword")
     @PostMapping("/set_password")
-    public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto newPasswordDto) {
-        userService.newPassword(newPasswordDto.getNewPassword(), newPasswordDto.getCurrentPassword());
+    public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto newPasswordDto, Authentication authentication) {
+        userService.updatePassword(newPasswordDto.getNewPassword(), newPasswordDto.getCurrentPassword(), authentication);
         printLogInfo("setPassword", "post", "/set_password");
         return ResponseEntity.ok(newPasswordDto);
     }
 
     @Operation(summary = "updateUserImage", description = "updateUserImage")
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image) {
+    public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image, Authentication authentication) {
         printLogInfo("updateUserImage", "patch", "/me/image");
-        return ResponseEntity.ok().body(userService.updateUserImage(image));
+        return ResponseEntity.ok().body(userService.updateUserImage(image, authentication));
     }
 
     @Operation(summary = "getUserById", description = "getUserById")
@@ -73,15 +66,15 @@ public class UserController {
 
     @Operation(summary = "getUser", description = "Get info about me")
     @GetMapping("/me")
-    public UserDto getUser() {
+    public UserDto getUser(Authentication authentication) {
         printLogInfo("getUser", "get", "/me");
-        return userMapper.toDto((userService.getUser()));
+        return userMapper.toDto((userService.getUser(authentication)));
     }
 
     @GetMapping(value = "/image/{id}", produces = {MediaType.IMAGE_PNG_VALUE})
-    public ResponseEntity<byte[]> getImageById(@PathVariable("id") int id) {
+    public ResponseEntity<byte[]> getImageById(@PathVariable("id") int id, Authentication authentication) {
         printLogInfo("getImageOfUser", "get", "/image/{id}");
-        return ResponseEntity.ok(imageService.getImageById(id).getData());
+        return ResponseEntity.ok(imageService.getImageById(userService.getUser(authentication).getImage().getId()).getData());
     }
 
     @Operation(summary = "updateRole", description = "updateRole")

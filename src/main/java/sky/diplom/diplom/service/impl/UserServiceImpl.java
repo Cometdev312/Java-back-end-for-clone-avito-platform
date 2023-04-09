@@ -1,11 +1,11 @@
 package sky.diplom.diplom.service.impl;
 
-import liquibase.repackaged.net.sf.jsqlparser.util.validation.ValidationException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,15 +15,10 @@ import sky.diplom.diplom.dto.Role;
 import sky.diplom.diplom.dto.UserDto;
 import sky.diplom.diplom.entity.User;
 import sky.diplom.diplom.repository.UserRepository;
-import sky.diplom.diplom.security.SecurityUtils;
 import sky.diplom.diplom.security.UserDetailsServiceImpl;
 import sky.diplom.diplom.service.ImageService;
 import sky.diplom.diplom.service.UserService;
 
-import java.time.Instant;
-
-import static sky.diplom.diplom.dto.Role.USER;
-import static sky.diplom.diplom.security.SecurityUtils.getUserDetailsFromContext;
 
 @Transactional
 @RequiredArgsConstructor
@@ -36,11 +31,8 @@ public class UserServiceImpl implements UserService {
     private final UserDetailsServiceImpl userDetailsService;
 
     @Override
-    public User getUser()  {
-        return userRepository.findByEmailIgnoreCase(SecurityUtils.
-                        getUserDetailsFromContext().getUsername()).
-                orElseThrow(() -> new NotFoundException(String.format("User with email \"%s\" not found!",
-                        getUserDetailsFromContext().getUsername())));
+    public User getUser(Authentication authentication) {
+        return getUserByUsername(authentication.getName());
     }
 
     @Override
@@ -49,21 +41,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " not found!"));
     }
 
-    public User createUser(User user) {
-        if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
-            throw new ValidationException(String.format("User \"%s\" already exists!", user.getEmail()));
-        }
-        if (user.getRole() == null) {
-            user.setRole(USER);
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRegDate(Instant.now());
-        return userRepository.save(user);
-    }
-
     @Override
-    public User updateUser(UserDto userDto) {
-        User user = getUserById(getUserDetailsFromContext().getId());
+    public User updateUser(UserDto userDto, Authentication authentication) {
+        User user = getUserByUsername(authentication.getName());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
         user.setPhone(userDto.getPhone());
@@ -71,19 +51,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void newPassword(String newPassword, String currentPassword) {
-        UserDetails userDetails = getUserDetailsFromContext();
-        if (!passwordEncoder.matches(currentPassword, userDetails.getPassword())) {
+    public void updatePassword(String newPassword, String currentPassword, Authentication authentication) {
+        User user = getUserByUsername(authentication.getName());
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new BadCredentialsException("The current password is incorrect!");
         }
-        userDetailsService.updatePassword(userDetails, passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     @Override
     @SneakyThrows
-    public String updateUserImage(MultipartFile image) {
-        User user = getUserById(getUserDetailsFromContext().getId());
-        imageService.remove(user.getImage());
+    public String updateUserImage(MultipartFile image, Authentication authentication) {
+        User user = getUserByUsername(authentication.getName());
+        if (user.getImage() != null) {
+            imageService.remove(user.getImage());
+        }
         user.setImage(imageService.uploadImage(image));
         return "/users/image/" + userRepository.save(user).getImage().getId();
     }
@@ -94,5 +77,10 @@ public class UserServiceImpl implements UserService {
         user.setRole(role);
         userRepository.save(user);
         return user;
+    }
+
+    private User getUserByUsername(String username) {
+        return userRepository.findByEmailIgnoreCase(username).orElseThrow(() ->
+                new UsernameNotFoundException(String.format("The user with email: \"%s\" not found", username)));
     }
 }
