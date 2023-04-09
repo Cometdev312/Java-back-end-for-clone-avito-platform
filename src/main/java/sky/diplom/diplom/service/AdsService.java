@@ -65,6 +65,10 @@ public interface AdsService {
      */
     Ads updateAds(Long adId, CreateAdsDto createAdsDto, Authentication authentication);
 
+    /**
+     *
+     */
+    void updateAdsImage(long id, MultipartFile image, Authentication authentication);
 
     Comment getComment(long adPk, long id);
 

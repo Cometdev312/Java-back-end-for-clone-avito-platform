@@ -1,9 +1,13 @@
 package sky.diplom.diplom.service.impl;
 
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.webjars.NotFoundException;
 import sky.diplom.diplom.dto.CommentDto;
 import sky.diplom.diplom.dto.CreateAdsDto;
 import sky.diplom.diplom.entity.Ads;
@@ -17,62 +21,92 @@ import sky.diplom.diplom.repository.UserRepository;
 import sky.diplom.diplom.security.SecurityUtils;
 import sky.diplom.diplom.service.AdsService;
 import sky.diplom.diplom.service.ImageService;
+import sky.diplom.diplom.service.UserService;
+
 
 
 import java.util.Collection;
 import java.util.List;
 
+import static sky.diplom.diplom.security.SecurityUtils.checkPermissionToAds;
 import static sky.diplom.diplom.security.SecurityUtils.checkPermissionToAdsComment;
 
-
+@Transactional
+@Service
 public class AdsServiceImpl implements AdsService {
 
-    Logger logger = LoggerFactory.getLogger(AdsServiceImpl.class);
-
+    private final UserService userService;
+    private final ImageService imageService;
     private final AdsRepository adsRepository;
-
     private final CommentRepository commentRepository;
-
-    private final UserRepository userRepository;
-
-    private final ImageService imagesService;
-
     private final AdsMapper adsMapper;
+    private final CommentMapper сommentMapper;
 
-    private final CommentMapper commentMapper;
-
-
+    public AdsServiceImpl(UserService userService, ImageService imageService, AdsRepository adsRepository,
+                          CommentRepository commentRepository,
+                          AdsMapper adsMapper, CommentMapper сommentMapper) {
+        this.userService = userService;
+        this.imageService = imageService;
+        this.adsRepository = adsRepository;
+        this.commentRepository = commentRepository;
+        this.adsMapper = adsMapper;
+        this.сommentMapper = сommentMapper;
+    }
 
     @Override
     public Collection<Ads> getAllAds() {
-        return null;
+        return adsRepository.findAll();
+    }
+
+    @SneakyThrows
+    @Override
+    public Ads addAds(CreateAdsDto createAdsDto, MultipartFile imageFile, Authentication authentication) {
+        Ads ads = adsMapper.toEntity(createAdsDto);
+        User user = userService.getUser(authentication);
+        ads.setAuthor(user);
+        ads.setImage(imageService.uploadImage(imageFile));
+        return adsRepository.save(ads);
     }
 
     @Override
     public Collection<Ads> getAdsMe(Authentication authentication) {
-        return null;
+        return adsRepository.findAllByAuthorId(userService.getUser(authentication).getId());
     }
 
-    @Override
     public Ads getAdsById(Long adId) {
-        return null;
+        return adsRepository.findById(adId).orElseThrow(
+                () -> new NotFoundException("Ad with id " + adId + " not found!"));
     }
 
-    @Override
-    public Ads addAds(CreateAdsDto createAdsDto, MultipartFile imageFiles, Authentication authentication) {
-        return null;
-    }
-
-    @Override
     public Ads removeAdsById(Long adId, Authentication authentication) {
-        return null;
+        Ads ads = getAdsById(adId);
+        checkPermissionToAds(ads, userService.getUser(authentication));
+        CommentRepository.deleteAdsCommentsByAdId(adId);
+        adsRepository.delete(ads);
+        return ads;
     }
-
     @Override
     public Ads updateAds(Long adId, CreateAdsDto createAdsDto, Authentication authentication) {
-        return null;
+        Ads ads = getAdsById(adId);
+        checkPermissionToAds(ads, userService.getUser(authentication));
+        ads.setTitle(createAdsDto.getTitle());
+        ads.setDescription(createAdsDto.getDescription());
+        ads.setPrice(createAdsDto.getPrice());
+        return adsRepository.save(ads);
     }
 
+    @Override
+    @SneakyThrows
+    public void updateAdsImage(long id, MultipartFile image, Authentication authentication) {
+        if (image == null) {
+            throw new NotFoundException("New ad image not uploaded");
+        }
+        Ads ads = getAdsById(id);
+        checkPermissionToAds(ads, userService.getUser(authentication));
+        imageService.remove(ads.getImage());
+        ads.setImage(imageService.uploadImage(image));
+        adsRepository.save(ads);
+    }
 
 
     @Override
