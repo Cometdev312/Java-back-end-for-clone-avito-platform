@@ -1,10 +1,9 @@
 package sky.diplom.diplom.security;
 
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import sky.diplom.diplom.dto.Role;
 import sky.diplom.diplom.entity.Ads;
-import sky.diplom.diplom.entity.Comment;
+import sky.diplom.diplom.entity.AdsComment;
 import sky.diplom.diplom.entity.User;
 
 public class SecurityUtils {
@@ -20,7 +19,7 @@ public class SecurityUtils {
         }
     }
 
-    public static void checkPermissionToAdsComment(Comment adsComment, User user) {
+    public static void checkPermissionToAdsComment(AdsComment adsComment, User user) {
         MyUserDetails userDetails = new MyUserDetails(user);
 
         if (!userDetails.getAuthorities().contains(Role.ADMIN) && userDetails.getId() != adsComment.getAuthor().getId()) {

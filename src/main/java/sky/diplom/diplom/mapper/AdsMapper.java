@@ -44,11 +44,11 @@ public interface AdsMapper extends WebMapper<AdsDto, Ads> {
 
     // Этот метод преобразует Image в строку
     @Named("imageMapping")
-    default String imageMapping(Image userImage) {
-        if (userImage == null) {
+    default String imageMapping(Image image) {
+        if (image == null) {
             return null;
         }
-        return ADS_IMAGES + userImage.getId();
+        return ADS_IMAGES + image.getId();
     }
 }
 

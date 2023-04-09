@@ -11,7 +11,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Comment {
+public class AdsComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

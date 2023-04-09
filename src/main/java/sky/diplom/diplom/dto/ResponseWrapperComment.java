@@ -9,6 +9,6 @@ import java.util.List;
 public class ResponseWrapperComment {
 
     private int count;
-    private List<CommentDto> result = new ArrayList<>();
+    private List<AdsCommentDto> result = new ArrayList<>();
 
 }

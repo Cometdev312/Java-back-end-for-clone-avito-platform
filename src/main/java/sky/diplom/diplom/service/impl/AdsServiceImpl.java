@@ -1,32 +1,28 @@
 package sky.diplom.diplom.service.impl;
 
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
-import sky.diplom.diplom.dto.CommentDto;
+import sky.diplom.diplom.dto.AdsCommentDto;
 import sky.diplom.diplom.dto.CreateAdsDto;
 import sky.diplom.diplom.entity.Ads;
-import sky.diplom.diplom.entity.Comment;
+import sky.diplom.diplom.entity.AdsComment;
 import sky.diplom.diplom.entity.User;
+import sky.diplom.diplom.mapper.AdsCommentMapper;
 import sky.diplom.diplom.mapper.AdsMapper;
-import sky.diplom.diplom.mapper.CommentMapper;
 import sky.diplom.diplom.repository.AdsRepository;
-import sky.diplom.diplom.repository.CommentRepository;
-import sky.diplom.diplom.repository.UserRepository;
+import sky.diplom.diplom.repository.AdsCommentRepository;
 import sky.diplom.diplom.security.SecurityUtils;
 import sky.diplom.diplom.service.AdsService;
 import sky.diplom.diplom.service.ImageService;
 import sky.diplom.diplom.service.UserService;
 
 
-
+import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 
 import static sky.diplom.diplom.security.SecurityUtils.checkPermissionToAds;
 import static sky.diplom.diplom.security.SecurityUtils.checkPermissionToAdsComment;
@@ -38,19 +34,19 @@ public class AdsServiceImpl implements AdsService {
     private final UserService userService;
     private final ImageService imageService;
     private final AdsRepository adsRepository;
-    private final CommentRepository commentRepository;
+    private final AdsCommentRepository adsCommentRepository;
     private final AdsMapper adsMapper;
-    private final CommentMapper сommentMapper;
+    private final AdsCommentMapper adsCommentMapper;
 
     public AdsServiceImpl(UserService userService, ImageService imageService, AdsRepository adsRepository,
-                          CommentRepository commentRepository,
-                          AdsMapper adsMapper, CommentMapper сommentMapper) {
+                          AdsCommentRepository adsCommentRepository,
+                          AdsMapper adsMapper, AdsCommentMapper adsCommentMapper) {
         this.userService = userService;
         this.imageService = imageService;
         this.adsRepository = adsRepository;
-        this.commentRepository = commentRepository;
+        this.adsCommentRepository = adsCommentRepository;
         this.adsMapper = adsMapper;
-        this.сommentMapper = сommentMapper;
+        this.adsCommentMapper = adsCommentMapper;
     }
 
     @Override
@@ -81,18 +77,47 @@ public class AdsServiceImpl implements AdsService {
     public Ads removeAdsById(Long adId, Authentication authentication) {
         Ads ads = getAdsById(adId);
         checkPermissionToAds(ads, userService.getUser(authentication));
-        CommentRepository.deleteAdsCommentsByAdId(adId);
+        adsCommentRepository.deleteAdsCommentsByAdId(adId);
         adsRepository.delete(ads);
         return ads;
     }
+
     @Override
-    public Ads updateAds(Long adId, CreateAdsDto createAdsDto, Authentication authentication) {
-        Ads ads = getAdsById(adId);
-        checkPermissionToAds(ads, userService.getUser(authentication));
-        ads.setTitle(createAdsDto.getTitle());
-        ads.setDescription(createAdsDto.getDescription());
-        ads.setPrice(createAdsDto.getPrice());
-        return adsRepository.save(ads);
+    public AdsComment getAdsComment(long adPk, long id) {
+        return adsCommentRepository.findByIdAndAdId(id, adPk)
+                .orElseThrow(() -> new NotFoundException(String.format("Comment with id %d " +
+                        "belonging to ad with id %d not found!", id, adPk)));
+    }
+
+    @Override
+    public Collection<AdsComment> getComments(long adPk) {
+        return adsCommentRepository.findAllByAdId(adPk);
+    }
+
+    @Override
+    public AdsComment addAdsComments(long adPk, AdsCommentDto adsCommentDto, Authentication authentication) {
+        AdsComment adsComment = adsCommentMapper.toEntity(adsCommentDto);
+        User user = userService.getUser(authentication);
+        adsComment.setAuthor(user);
+        adsComment.setAd(getAdsById(adPk));
+        adsComment.setCreatedAt(Instant.now());
+        return adsCommentRepository.save(adsComment);
+    }
+
+    @Override
+    public AdsComment deleteAdsComment(long adPk, long id, Authentication authentication) {
+        AdsComment comment = getAdsComment(adPk, id);
+        checkPermissionToAdsComment(comment, userService.getUser(authentication));
+        adsCommentRepository.delete(comment);
+        return comment;
+    }
+
+    @Override
+    public AdsComment updateComments(long adPk, long id, AdsComment adsCommentUpdated, Authentication authentication) {
+        AdsComment adsComment = getAdsComment(adPk, id);
+        SecurityUtils.checkPermissionToAdsComment(adsComment, userService.getUser(authentication));
+        adsComment.setText(adsCommentUpdated.getText());
+        return adsCommentRepository.save(adsComment);
     }
 
     @Override
@@ -108,42 +133,13 @@ public class AdsServiceImpl implements AdsService {
         adsRepository.save(ads);
     }
 
-
     @Override
-    public Comment getComment(long adPk, long id) {
-        return commentRepository.findByIdAndAdId(id, adPk)
-                .orElseThrow(() -> new NotFoundException(String.format("Comment with id %d " +
-                        "belonging to ad with id %d not found!", id, adPk)));
-    }
-
-    @Override
-    public Collection<Comment> getComments(long adPk) {
-        return commentRepository.findAllByAdId(adPk);
-    }
-
-    @Override
-    public Comment addComments(long adPk, CommentDto commentDto, Authentication authentication) {
-        Comment comment = commentMapper.toEntity(commentDto);
-        User user = userService.getUser(authentication);
-        comment.setAuthor(user);
-        comment.setAd(getAdsById(adPk));
-        comment.setCreatedAt(Instant.now());
-        return commentRepository.save(comment);
-    }
-
-    @Override
-    public Comment deleteComment(long adPk, long id, Authentication authentication) {
-        Comment comment = getComment(adPk, id);
-        checkPermissionToAdsComment(comment, userService.getUser(authentication));
-        commentRepository.delete(comment);
-        return comment;
-    }
-
-    @Override
-    public Comment updateComments(long adPk, long id, Comment comment, Authentication authentication) {
-        Comment adsComment = getComment(adPk, id);
-        SecurityUtils.checkPermissionToAdsComment(adsComment, userService.getUser(authentication));
-        adsComment.setText(commentUpdated.getText());
-        return commentRepository.save(adsComment);
+    public Ads updateAds(Long adId, CreateAdsDto createAdsDto, Authentication authentication) {
+        Ads ads = getAdsById(adId);
+        checkPermissionToAds(ads, userService.getUser(authentication));
+        ads.setTitle(createAdsDto.getTitle());
+        ads.setDescription(createAdsDto.getDescription());
+        ads.setPrice(createAdsDto.getPrice());
+        return adsRepository.save(ads);
     }
 }
