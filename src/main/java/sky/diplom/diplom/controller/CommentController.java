@@ -1,6 +1,8 @@
 package sky.diplom.diplom.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sky.diplom.diplom.dto.CommentDto;
@@ -8,6 +10,7 @@ import sky.diplom.diplom.dto.ResponseWrapperComment;
 import sky.diplom.diplom.service.AdsService;
 import sky.diplom.diplom.service.CommentService;
 
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/ads")
@@ -15,6 +18,11 @@ public class CommentController {
 
     private CommentService commentService;
     private AdsService adsService;
+
+    public CommentController(CommentService commentService, AdsService adsService) {
+        this.commentService = commentService;
+        this.adsService = adsService;
+    }
 
     @GetMapping("/{id}/comments")
     public ResponseEntity<ResponseWrapperComment> getCommentsByAdsId(@PathVariable("id") Long adId) {
