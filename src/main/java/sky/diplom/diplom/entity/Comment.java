@@ -3,31 +3,27 @@ package sky.diplom.diplom.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @NoArgsConstructor
+@EqualsAndHashCode
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
-@ToString
 public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int pk;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
-    private User author;
-    @OneToOne
-    private Image authorImage;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "first_name")
-    private User authorFirstName;
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-    @Column(name = "text")
+    private long id;
+    private Instant createdAt;
     private String text;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User author;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pk_ads")
+    private Ads ad;
 }

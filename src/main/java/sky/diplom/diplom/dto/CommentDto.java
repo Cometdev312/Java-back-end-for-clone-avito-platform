@@ -1,17 +1,18 @@
 package sky.diplom.diplom.dto;
 
 import lombok.Data;
-import sky.diplom.diplom.entity.User;
-import sky.diplom.diplom.entity.Image;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Data
 public class CommentDto {
 
-    private int pk;
-    private User author;
-    private Image authorImage;
-    private String authorFirstName;
-    private int createdAt;
+    private long pk;
+    private int author;
+    private String createdAt;
+    @NotBlank
+    @Size(min = 8)
     private String text;
 
 }

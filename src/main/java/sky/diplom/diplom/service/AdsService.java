@@ -2,10 +2,13 @@ package sky.diplom.diplom.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
+import sky.diplom.diplom.dto.CommentDto;
 import sky.diplom.diplom.dto.CreateAdsDto;
 import sky.diplom.diplom.entity.Ads;
+import sky.diplom.diplom.entity.Comment;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface AdsService {
 
@@ -63,13 +66,14 @@ public interface AdsService {
     Ads updateAds(Long adId, CreateAdsDto createAdsDto, Authentication authentication);
 
 
-    /**
-     * Обновляет информацию об экземпляре изображения (поля: fileSize, mediaType, data).
-     * Цель - заменить старое изображение для объявления на сайте на новое.
-     *
-     * @param id    Идентификатор экземпляра изображения
-     * @param image image file
-     * @return ResponseEntity<byte [ ]>
-     */
-    void updateAdsImage(long id, MultipartFile image, Authentication authentication);
+    Comment getComment(long adPk, long id);
+
+    Collection<Comment> getComments(long adPk);
+
+    Comment addComments(long adPk, CommentDto adsCommentDto, Authentication authentication);
+
+    Comment deleteComment(long adPk, long id, Authentication authentication);
+
+    Comment updateComments(long adPk, long id, Comment adsComment, Authentication authentication);
+
 }
