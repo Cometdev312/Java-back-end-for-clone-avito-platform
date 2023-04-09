@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     private final UserDetailsServiceImpl userDetailsService;
 
     @Override
-    public User getUser() {
+    public User getUser()  {
         return userRepository.findByEmailIgnoreCase(SecurityUtils.
                         getUserDetailsFromContext().getUsername()).
                 orElseThrow(() -> new NotFoundException(String.format("User with email \"%s\" not found!",
