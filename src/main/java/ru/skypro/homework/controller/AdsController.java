@@ -7,14 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
-import ru.skypro.homework.mapper.AdsCommentMapper;
 import ru.skypro.homework.mapper.AdsMapper;
 import ru.skypro.homework.service.AdsService;
 import ru.skypro.homework.service.ImageService;
@@ -32,10 +30,9 @@ public class AdsController {
     private static final Logger logger = LoggerFactory.getLogger(AdsController.class);
     private final AdsService adsService;
     private final ImageService imageService;
-    private final AdsCommentMapper adsCommentMapper;
     private final AdsMapper adsMapper;
 
-    @Operation(summary = "getAllAds", description = "getAllAds")
+    @Operation(summary = "Получить все объявления", description = "getAllAds",tags={ "Объявления" })
     @GetMapping
     public ResponseWrapper<AdsDto> getAllAds() {
         printLogInfo("GET", "", "getAllAds");
@@ -43,7 +40,7 @@ public class AdsController {
     }
 
     @SneakyThrows
-    @Operation(summary = "addAds", description = "addAds")
+    @Operation(summary = "Добавить объявление", description = "addAds",tags={ "Объявления" })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AdsDto> addAds(@Parameter(description = "Данные нового объявления")
                                          @RequestPart("image") MultipartFile imageFile,
@@ -52,21 +49,21 @@ public class AdsController {
         return ResponseEntity.ok(adsMapper.toDto(adsService.addAds(createAdsDto, imageFile, authentication)));
     }
 
-    @Operation(summary = "getAdsMe", description = "getAdsMe")
+    @Operation(summary = "Получить объявления авторизованного пользователя", description = "getAdsMe",tags={ "Объявления" })
     @GetMapping("/me")
     public ResponseWrapper<AdsDto> getAdsMe(Authentication authentication) {
         printLogInfo("GET", "/me", "getAdsMe");
         return ResponseWrapper.of(adsMapper.toDto(adsService.getAdsMe(authentication)));
     }
 
-    @Operation(summary = "getFullAd", description = "getFullAd")
+    @Operation(summary = "Получить информацию об объявлении", description = "getFullAd",tags={ "Объявления" })
     @GetMapping("/{adId}")
     public ResponseEntity<FullAdsDto> getFullAd(@PathVariable("adId") Long adId) {
         printLogInfo("GET", "/" + adId, "getFullAd");
         return ResponseEntity.ok(adsMapper.toFullAdsDto(adsService.getAdsById(adId)));
     }
 
-    @Operation(summary = "updateAds", description = "updateAds")
+    @Operation(summary = "Обновить информацию об объявлении", description = "updateAds",tags={ "Объявления" })
     @PatchMapping("/{adId}")
     public ResponseEntity<AdsDto> updateAds(@PathVariable("adId") Long adId,
                                             @RequestBody CreateAdsDto createAdsDto, Authentication authentication) {
@@ -74,7 +71,7 @@ public class AdsController {
         return ResponseEntity.ok(adsMapper.toDto(adsService.updateAds(adId, createAdsDto, authentication)));
     }
 
-    @Operation(summary = "updateAdsImage", description = "updateAdsImage")
+    @Operation(summary = "Обновить картинку объявления", description = "updateAdsImage",tags={ "Объявления" })
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateAdsImage(@PathVariable("id") long id,
                                             @NotNull @RequestBody MultipartFile image, Authentication authentication) {
@@ -83,7 +80,7 @@ public class AdsController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "removeAds", description = "removeAds")
+    @Operation(summary = "Удалить объявление", description = "removeAds", tags={ "Объявления" })
     @DeleteMapping("/{adId}")
     public ResponseEntity<Void> removeAds(@PathVariable("adId") Long adId, Authentication authentication) {
         printLogInfo("DELETE", "/" + adId, "removeAds");
