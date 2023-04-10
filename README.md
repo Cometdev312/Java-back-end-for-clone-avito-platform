@@ -31,7 +31,7 @@ ___
 - Загрузка и отображение изображений объявлений и аватаров пользователей
 
 ## Specification:
-- [Technical task]()
+- [Technical task](https://skyengpublic.notion.site/02df5c2390684e3da20c7a696f5d463d)
 ___
 ## Development team:
 - [Вихарев Николай](https://github.com/ViharevN)
@@ -59,5 +59,13 @@ ___
 * Frontend:
     - Docker image
 ---
+## Application launch
+* Для запуска приложения Вам потребуется выполнить несколько шагов:
+    - Клонирование проекта в среду разработки (например, **IntelliJ IDEA** или **Eclipse IDE**);
+    - В файле **application.properties** указать путь к Вашей базе данных;
+    - Запустите **Docker**;
+    - Запустите **Docker image**;
+    - Запустите метод **main** в файле **DiplomApplication.java**
 
-
+**После выполнения всех шагов веб-сайт будет доступен по адресу** http://localhost:3000
+ 
