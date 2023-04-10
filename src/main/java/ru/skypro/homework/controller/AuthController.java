@@ -24,7 +24,7 @@ public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private final AuthService authService;
 
-    @Operation(summary = "login", description = "login")
+    @Operation(summary = "Авторизация пользователя", description = "login", tags={ "Авторизация" })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginReqDto req) {
         printLogInfo("login", "post", "/login");
@@ -35,7 +35,7 @@ public class AuthController {
         }
     }
 
-    @Operation(summary = "register", description = "register")
+    @Operation(summary = "Регистрация пользователя", description = "register", tags={ "Регистрация" })
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterReqDto req) {
         printLogInfo("register", "post", "/register");

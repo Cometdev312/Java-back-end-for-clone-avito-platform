@@ -31,14 +31,14 @@ public class UserController {
     private final UserMapper userMapper;
     private final ImageService imageService;
 
-    @Operation(summary = "updateUser", description = "updateUser")
+    @Operation(summary = "Обновить информацию об авторизованном пользователе", description = "updateUser", tags={ "Пользователи" })
     @PatchMapping("/me")
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, Authentication authentication) {
         printLogInfo("updateUser", "patch", "/me");
         return ResponseEntity.ok(userMapper.toDto(userService.updateUser(userDto, authentication)));
     }
 
-    @Operation(summary = "setPassword", description = "setPassword")
+    @Operation(summary = "Обновление пароля", description = "setPassword", tags={ "Пользователи" })
     @PostMapping("/set_password")
     public ResponseEntity<NewPasswordDto> setPassword(@RequestBody NewPasswordDto newPasswordDto, Authentication authentication) {
         userService.updatePassword(newPasswordDto.getNewPassword(), newPasswordDto.getCurrentPassword(), authentication);
@@ -46,14 +46,14 @@ public class UserController {
         return ResponseEntity.ok(newPasswordDto);
     }
 
-    @Operation(summary = "updateUserImage", description = "updateUserImage")
+    @Operation(summary = "Обновить аватар авторизованного пользователя", description = "updateUserImage", tags={ "Пользователи" })
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateUserImage(@RequestBody MultipartFile image, Authentication authentication) {
         printLogInfo("updateUserImage", "patch", "/me/image");
         return ResponseEntity.ok().body(userService.updateUserImage(image, authentication));
     }
 
-    @Operation(summary = "getUserById", description = "getUserById")
+    @Operation(summary = "Получить информацию об пользователе по ID", description = "getUserById", tags={ "Пользователи" })
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("id") long id) {
         User user = userService.getUserById(id);
@@ -61,7 +61,7 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
-    @Operation(summary = "getUser", description = "Get info about me")
+    @Operation(summary = "Получить информацию об авторизованном пользователе", description = "Get info about me", tags={ "Пользователи" })
     @GetMapping("/me")
     public UserDto getUser(Authentication authentication) {
         printLogInfo("getUser", "get", "/me");
@@ -74,7 +74,7 @@ public class UserController {
         return ResponseEntity.ok(imageService.getImageById(userService.getUser(authentication).getImage().getId()).getData());
     }
 
-    @Operation(summary = "updateRole", description = "updateRole")
+    @Operation(summary = "Обновление роли пользователя", description = "updateRole", tags={ "Пользователи" })
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}/updateRole")
     public ResponseEntity<UserDto> updateRole(@PathVariable("id") long id, Role role) {

@@ -29,14 +29,14 @@ public class CommentController {
     private final AdsService adsService;
     private final AdsCommentMapper adsCommentMapper;
 
-    @Operation(summary = "getComments", description = "getComments")
+    @Operation(summary = "Получить комментарии объявления", description = "getComments", tags={ "Комментарии" })
     @GetMapping("/{ad_pk}/comments")
     public ResponseWrapper<AdsCommentDto> getComments(@PathVariable("ad_pk") long adPk) {
         printLogInfo("GET", "/" + adPk + "/comments", "getComments");
         return ResponseWrapper.of(adsCommentMapper.toDto(adsService.getComments(adPk)));
     }
 
-    @Operation(summary = "addAdsComments", description = "addAdsComments")
+    @Operation(summary = "Добавить комментарий к объявлению", description = "addAdsComments", tags={ "Комментарии" })
     @PostMapping("/{ad_pk}/comments")
     public ResponseEntity<AdsCommentDto> addAdsComments(@PathVariable("ad_pk") long adPk,
                                                         @RequestBody @Valid AdsCommentDto adsCommentDto, Authentication authentication) {
@@ -44,7 +44,7 @@ public class CommentController {
         return ResponseEntity.ok(adsCommentMapper.toDto(adsService.addAdsComments(adPk, adsCommentDto, authentication)));
     }
 
-    @Operation(summary = "getAdsComment", description = "getAdsComment")
+    @Operation(summary = "Получить комментарий объявления", description = "getAdsComment", tags={ "Комментарии" })
     @GetMapping("/{ad_pk}/comments/{id}")
     public ResponseEntity<AdsCommentDto> getAdsComment(@PathVariable("ad_pk") long adPk,
                                                        @PathVariable("id") long id) {
@@ -52,7 +52,7 @@ public class CommentController {
         return ResponseEntity.ok(adsCommentMapper.toDto(adsService.getAdsComment(adPk, id)));
     }
 
-    @Operation(summary = "deleteAdsComment", description = "deleteAdsComment")
+    @Operation(summary = "Удалить комментарий", description = "deleteAdsComment", tags={ "Комментарии" })
     @DeleteMapping("/{ad_pk}/comments/{id}")
     public ResponseEntity<HttpStatus> deleteAdsComment(@PathVariable("ad_pk") long adPk,
                                                        @PathVariable("id") long id, Authentication authentication) {
@@ -61,7 +61,7 @@ public class CommentController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @Operation(summary = "updateComments", description = "updateComments")
+    @Operation(summary = "Обновить комментарий", description = "updateComments", tags={ "Комментарии" })
     @PatchMapping("/{ad_pk}/comments/{id}")
     public ResponseEntity<AdsCommentDto> updateComments(@PathVariable("ad_pk") int adPk,
                                                         @PathVariable("id") int id,
