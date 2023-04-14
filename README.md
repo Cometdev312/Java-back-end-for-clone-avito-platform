@@ -69,3 +69,12 @@ ___
 
 **После выполнения всех шагов веб-сайт будет доступен по адресу** http://localhost:3000
  
+---
+## Demonstration of the work
+[Ссылка на демо](https://disk.yandex.ru/i/YkERK8iNsajjJA)
+___
+<div id="badges" align="center">
+<a
+href="https://git.io/typing-svg"><img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=200&pause=1000&width=435&lines=Thank+you+for+your+attention!" alt="Typing SVG" />
+</a>
+</div>
